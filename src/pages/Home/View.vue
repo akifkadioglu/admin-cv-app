@@ -105,10 +105,8 @@ export default {
 
     const createBlog = async () => {
       loading.value = true;
-      console.log(type_id.value);
       const typeRef = doc(collection(firestore, "Types"), type_id.value);
       var now = new Date();
-      console.log(now);
 
       const data = {
         title: title.value,
@@ -116,7 +114,10 @@ export default {
         created_at: now,
         type: typeRef,
       };
-      await addDoc(collection(firestore, "Blogs"), data);
+      await addDoc(collection(firestore, "Blogs"), data).then((x) => {
+        title.value = "";
+        content.value = "";
+      });
       loading.value = false;
     };
 
