@@ -88,7 +88,7 @@
 import { getAuth } from "firebase/auth";
 import { onMounted, ref } from "vue";
 import { collection, addDoc, query, doc, getDocs } from "firebase/firestore";
-import { firestore } from "../../../../frontend/src/firebase/config";
+import { firestore } from "../../firebase/config";
 
 export default {
   setup() {
