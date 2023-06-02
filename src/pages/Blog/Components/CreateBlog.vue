@@ -10,7 +10,7 @@
             Title
           </label>
           <input
-            class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+            class="appearance-none block w-full text-gray-700 border rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none"
             id="grid-first-name"
             type="text"
             v-model="title"
@@ -26,7 +26,7 @@
           </label>
           <div class="relative">
             <select
-              class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none"
+              class="block appearance-none w-full border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-full leading-tight focus:outline-none"
               id="grid-state"
               v-model="type_id"
             >
@@ -62,25 +62,24 @@
           >
             Content
           </label>
-          <textarea
-            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
-            id="grid-password"
-            placeholder="Write content here"
-            v-model="content"
-          />
+          <ckeditor :editor="editor" v-model="content" />
         </div>
       </div>
+
       <div v-if="loading" class="flex justify-center my-5">
         <div class="w-7 h-7 border-2 border-gray-300 animate-spin"></div>
       </div>
       <button
         v-else
         @click="createBlog()"
-        class="shadow w-full font-bold py-2 px-4 rounded"
+        class="transition w-full font-bold py-2 px-4 rounded hover:bg-blue-200 border"
         type="button"
       >
         Create
       </button>
+      <div v-if="warning" class="font-bold text-sm mt-1 italic">
+        The title or content can't be empty
+      </div>
     </form>
   </div>
 </template>
@@ -88,25 +87,46 @@
 import { getAuth } from "firebase/auth";
 import { onMounted, ref } from "vue";
 import { collection, addDoc, query, doc, getDocs } from "firebase/firestore";
-import { firestore } from "../../firebase/config";
+import { firestore } from "../../../firebase/config";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default {
   setup() {
     onMounted(() => {
       getTypes();
     });
-
+    const editor = ClassicEditor;
     const user = getAuth().currentUser;
     const types = ref([]);
     const type_id = ref();
     const title = ref("");
     const content = ref("");
     const loading = ref(false);
-
+    const warning = ref(false);
     const createBlog = async () => {
       loading.value = true;
       const typeRef = doc(collection(firestore, "Types"), type_id.value);
       var now = new Date();
+      if (title.value == "" || content.value == "") {
+        warning.value = true;
+        loading.value = false;
+        return;
+      }
+      content.value = content.value.replace(
+        /<a/g,
+        `<a target="_blank" class="hover:underline font-bold text-cyan-700  dark:text-cyan-400"`
+      );
+      content.value = content.value.replace(
+        /<blockquote/g,
+        `<blockquote class="text-xl italic font-semibold text-gray-900 dark:text-white ml-10"`
+      );
+      content.value = content.value.replace(/oembed/g, `iframe`);
+      content.value = content.value.replace(/url=/g, "src=");
+      content.value = content.value.replace(/watch\?v=/g, "embed/");
+      content.value = content.value.replace(
+        /figure class="media"/g,
+        `figure class="flex justify-center my-10"`
+      );
 
       const data = {
         title: title.value,
@@ -118,6 +138,7 @@ export default {
         title.value = "";
         content.value = "";
       });
+      warning.value = false;
       loading.value = false;
     };
 
@@ -140,6 +161,8 @@ export default {
       content,
       loading,
       createBlog,
+      editor,
+      warning,
     };
   },
 };

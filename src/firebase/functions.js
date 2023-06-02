@@ -1,4 +1,4 @@
-import { collectionGroup, collection, where, addDoc, query, orderBy, doc, getDoc, getDocs, limit, startAfter, endBefore } from "firebase/firestore";
+import { collectionGroup, collection, where, deleteDoc, query, orderBy, doc, getDoc, getDocs, limit, startAfter, endBefore, startAt, endAt } from "firebase/firestore";
 import { firestore } from "./config";
 
 export const fetchFire = {
@@ -28,12 +28,10 @@ export const fetchFire = {
         return belgeler;
     },
 
-    async getPostsByCreatedAtPagination(collectionName, count, lastOne = null) {
+    async getPostsByTitle(collectionName, title) {
         const belgeQuery = query(
             collection(firestore, collectionName),
-            orderBy('created_at', 'desc'),
-            limit(count),
-            endBefore(lastOne)
+            where("title", "==", title),
         );
         const belgeSnapshot = await getDocs(belgeQuery);
         const belgeler = [];
@@ -52,35 +50,15 @@ export const fetchFire = {
         return belgeler;
     },
 
-    async count_page_view(blog_id) {
-        const blog = doc(collection(firestore, 'Blogs'), blog_id)
-
-        const belgeQuery = query(
-            collection(firestore, "PageViews"),
-            where("blog", "==", blog)
-        );
-        const belgeSnapshot = await getDocs(belgeQuery);
-        return belgeSnapshot.docs.length
-    },
-
-    async add_page_view(blog_id) {
-        const blog = doc(collection(firestore, 'Blogs'), blog_id)
-        var ip = ""
-
-        await fetch('https://api.ipify.org/?format=json&callback=get_viewers_ip')
-            .then(response => response.json())
-            .then(data => ip = data.ip);
-
-        const belgeQuery = query(
-            collection(firestore, "PageViews"),
-            where("blog", "==", blog),
-            where("viewer_ip", "==", ip)
-        );
-
-        const belgeSnapshot = await getDocs(belgeQuery);
-        if (belgeSnapshot.docs.length > 0) return
-
-        const data = { viewer_ip: ip, blog: blog };
-        addDoc(collection(firestore, 'PageViews'), data)
+    async deleteByID(collectionName, documentId) {
+        try {
+            const documentRef = doc(firestore, collectionName, documentId);
+            await deleteDoc(documentRef)
+            alert("Deleted succesfuly")
+            return true
+        } catch {
+            alert("Something went wrong")
+            return false
+        }
     }
 }

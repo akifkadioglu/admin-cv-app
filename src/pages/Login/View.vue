@@ -3,11 +3,11 @@
     class="flex flex-col items-center justify-center px-6 py-8 mx-auto my-10 lg:py-0"
   >
     <div
-      class="w-full bg-white mb-10 dark:bg-neutral-800 md:mt-0 sm:max-w-md xl:p-0 rounded-lg ring-1 ring-slate-900/5 shadow-sm"
+      class="w-full bg-white mb-10 md:mt-0 sm:max-w-md xl:p-0 rounded-lg ring-1 ring-slate-900/5 shadow-sm"
     >
       <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
         <h1
-          class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+          class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
         >
           Login
         </h1>
@@ -15,7 +15,7 @@
           <div>
             <label
               for="email"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block mb-2 text-sm font-medium text-gray-900"
             >
               Your email
             </label>
@@ -24,7 +24,7 @@
               type="email"
               name="email"
               id="email"
-              class="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
+              class="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5"
               placeholder="name@company.com"
               required=""
             />
@@ -32,7 +32,7 @@
           <div>
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block mb-2 text-sm font-medium text-gray-900"
             >
               Password
             </label>
@@ -42,7 +42,7 @@
               name="password"
               id="password"
               placeholder="••••••••"
-              class="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
+              class="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5"
               required=""
             />
           </div>
@@ -52,7 +52,7 @@
           <button
             v-else
             @click="signIn"
-            class="w-full text-white bg-blue-900 hover:bg-primary-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700"
+            class="w-full text-white bg-blue-900 hover:bg-primary-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
           >
             Sign in
           </button>
@@ -70,20 +70,15 @@ const email = ref("");
 const password = ref("");
 var loading = ref(false);
 const router = useRouter();
+
 const signIn = async () => {
-  try {
-    loading.value = true;
-    const auth = getAuth();
-    await signInWithEmailAndPassword(auth, email.value, password.value)
-      .then((res) => {
-        router.push({ name: routeName.HOME });
-      })
-      .catch((err) => {});
-    loading.value = false;
-    // Oturum açma başarılı, yönlendirme veya diğer işlemleri gerçekleştirin
-  } catch (error) {
-    // Oturum açma hatası, hata mesajını kullanıcıya gösterebilirsiniz
-    console.log("Oturum açma hatası:", error.message);
-  }
+  loading.value = true;
+  const auth = getAuth();
+  await signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => {
+      router.push({ name: routeName.HOME });
+    })
+    .catch((err) => {});
+  loading.value = false;
 };
 </script>

@@ -1,7 +1,8 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-import Home from '../pages/Home/View.vue'
 import Login from '../pages/Login/View.vue'
+import Blog from '../pages/Blog/View.vue'
+import Type from '../pages/Type/View.vue'
 import AuthLayout from '../layouts/auth.vue'
 import OtherLayout from '../layouts/other.vue'
 
@@ -13,7 +14,22 @@ const routes = [
     path: '/',
     name: routeName.HOME,
     meta: { layout: OtherLayout, requiresAuth: true },
-    component: Home
+    redirect: {
+      name: routeName.BLOG
+    },
+    children: [
+      {
+        path: '/type',
+        name: routeName.TYPE,
+        component: Type,
+      },
+      {
+
+        path: '/blog',
+        name: routeName.BLOG,
+        component: Blog,
+      },
+    ],
   },
   {
     path: '/login',

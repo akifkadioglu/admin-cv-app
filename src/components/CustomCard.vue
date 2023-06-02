@@ -7,11 +7,11 @@
     >
       {{ title }}
     </h3>
-    <p
-      class="line-clamp-2 hover:line-clamp-5 font-mono text-slate-500 dark:text-slate-400 mt-2 text-sm"
-    >
-      {{ content }}
-    </p>
+    
+    <div
+      v-html="content"
+      class="line-clamp-2 font-mono text-slate-500 dark:text-slate-400 mt-2 text-sm"
+    ></div>
     <div class="flex justify-end mt-5">
       <button
         :aria-label="buttonText + 'button'"
